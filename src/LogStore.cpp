@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 #include "LogStore.h"
 #include "utils.h"
 #include "Constants.h"

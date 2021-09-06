@@ -37,4 +37,7 @@ main.o:
 	$(CXX) $(CXXFLAGS) -I$(INCDIR) main.cpp
 
 clean:
+	clear
+	rm -f *.config
+	rm -f *.log
 	rm -f *.o main

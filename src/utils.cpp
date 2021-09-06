@@ -1,22 +1,18 @@
-#include "utils.h"
-#include "Constants.h"
 #include <iostream>
 #include <sstream>
 #include <cstdio>
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-
-#else
-    #include <sys/statvfs.h>
-    #include <sys/stat.h>
-    #include <pwd.h>
-    #include <unistd.h>
-#endif
+#include <chrono>
+#include <ctime>
+#include <sys/statvfs.h>
+#include <sys/stat.h>
+#include <pwd.h>
+#include <unistd.h>
+#include "utils.h"
+#include "Constants.h"
 
 
 uint64_t GetFreeSpace() {
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-#else
+
     struct statvfs stat;
     struct passwd *pw = getpwuid(getuid());
 
@@ -25,19 +21,7 @@ uint64_t GetFreeSpace() {
         return freeBytes;
     }
     return 0;
-#endif
 }
-
-std::string GetTempFileName()
-{
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-#else
-    //TODO
-    char buf[MAX_LEN_FILENAME];
-    return std::tmpnam(buf);
-#endif
-}
-
 
 std::string GetFileName(const std::string& fileName, const std::string& extension, uint64_t index)
 {
@@ -59,9 +43,6 @@ std::string GetFileName(const std::string& fileName, const std::string& extensio
 bool  RenameFileName(const std::string &oldFileName, const std::string &newFileName)
 {
     int res = rename(oldFileName.c_str(), newFileName.c_str());
-
-    std::cout <<"Old FileName: " << oldFileName.c_str() << std::endl;
-    std::cout <<"new FileName: " << newFileName.c_str() << std::endl;
     if (res != 0) {
         return false;
     }
@@ -99,4 +80,25 @@ uint64_t StringToInt(std::string &str) {
     uint64_t i;
     ss >> i;
     return i;
+}
+
+
+// format it in two parts: main part with date and time and part with milliseconds
+std::string GetCurrentTimeStamp()
+{
+    auto tp = std::chrono::system_clock::now();
+    std::time_t current_time = std::chrono::system_clock::to_time_t(tp);
+
+    // this function use static global pointer. so it is not thread safe solution
+    std::tm* time_info = std::localtime(&current_time);
+
+    char buffer[128];
+
+    int string_size = strftime(
+        buffer, sizeof(buffer),
+        LOGGER_PRETTY_TIME_FORMAT,
+        time_info
+    );
+
+    return std::string(buffer, buffer + string_size);
 }

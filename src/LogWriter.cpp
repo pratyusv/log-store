@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <unistd.h>
 #include "utils.h"
 #include "Constants.h"
 #include "LogWriter.h"
@@ -17,27 +18,42 @@ uint64_t LogWriter::GetStartRecordIndex() const { return startRecordIndex; }
 uint64_t LogWriter::GetEndRecordIndex() const { return endRecordIndex; }
 uint64_t LogWriter::GetNumOfRecords() const { return endRecordIndex - startRecordIndex; }
 
+
+std::vector<char> LogWriter::ProcessRecord(LogRecord& record)
+{
+    std::string currentTime = GetCurrentTimeStamp();
+    
+    std::vector<char> data = std::vector<char>(currentTime.begin(), currentTime.end());
+    std::vector<char> recordMsg = record.getMessage();
+    data.insert(data.end(),recordMsg.begin(), recordMsg.end());
+    return data;
+}
+
 /*
     WriteTempRecordInStore: Write File in Temporary Storage. 
     Input: record: Log Record, fileName: File Name
     Output: bool
 */
-bool LogWriter::WriteTempRecordInStore(LogRecord& record, const std::string& fileName) {
+bool LogWriter::WriteTempRecordInStore(LogRecord& record, char* fileName) {
     std::ofstream file;
-    std::vector<char> data = record.getMessage();
+
+    
+    std::vector<char> data = ProcessRecord(record);
     const uint64_t bytesToWrite = data.size();
 
     if (0 == bytesToWrite || bytesToWrite > MAX_RECORD_SIZE ||  bytesToWrite > GetFreeSpace()) {
         return false;
     }
 
-    file.open(fileName.c_str(), std::ios::out | std::ios::binary);
-    if (!file.is_open()) {
+
+    int fd = mkstemp(fileName);   
+
+    if (-1 == fd) {
         return false;
     }
 
-    file.write(data.data(), bytesToWrite);
-    if (!file.good()) {
+    int fs = write(fd, data.data(), bytesToWrite);
+    if (-1 == fs) {
         return false;
     }
 
@@ -51,7 +67,7 @@ bool LogWriter::WriteTempRecordInStore(LogRecord& record, const std::string& fil
 */
 
 bool LogWriter::AppendRecord(LogRecord& record) {
-    std::string fileName = GetTempFileName();
+    char fileName[] = "/tmp/LogStore_XXXXXX";
 
     if (!WriteTempRecordInStore(record, fileName)) {
         return false;
@@ -60,7 +76,7 @@ bool LogWriter::AppendRecord(LogRecord& record) {
     // Acquire lock to create file and increase end Index.
     std::lock_guard<std::mutex> lock(_mutex);
     
-    if (!RenameFileName(fileName, GetFileName(sLogStoreName, LOG_EXTENSION, endRecordIndex))) {
+    if (!RenameFileName(std::string(fileName), GetFileName(sLogStoreName, LOG_EXTENSION, endRecordIndex))) {
         return false;
     }
 

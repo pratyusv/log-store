@@ -14,7 +14,7 @@ class LogWriter {
         std::mutex _mutex;
     
     private:
-        bool WriteTempRecordInStore(LogRecord& record,const std::string& fileName);
+        bool WriteTempRecordInStore(LogRecord& record,char* fileName);
     
     public:
         LogWriter(std::string LogStoreName);
@@ -24,6 +24,8 @@ class LogWriter {
         uint64_t GetEndRecordIndex() const;
         uint64_t GetNumOfRecords() const;
 
+
+        std::vector<char> ProcessRecord(LogRecord& record);
         bool AppendRecord(LogRecord& record);
         bool ReadRecord(const uint64_t& recordIndex, LogRecord& record);
         bool TruncateRecord(const uint64_t& position);

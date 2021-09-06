@@ -16,7 +16,8 @@ int main() {
 
     // empty log store
     uint64_t pos = log.GetIndex();
-    log.Truncate(pos-1);
+    std::cout <<"position: " << pos << std::endl;
+    //log.Truncate(pos-1);
 
     return 0;
 }
