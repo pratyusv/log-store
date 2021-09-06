@@ -29,7 +29,4 @@ class LogWriter {
         bool TruncateRecord(const uint64_t& position);
 };
 
-
-
-
 #endif

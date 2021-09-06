@@ -8,6 +8,9 @@
 
 #else
     #include <sys/statvfs.h>
+    #include <sys/stat.h>
+    #include <pwd.h>
+    #include <unistd.h>
 #endif
 
 
@@ -56,6 +59,9 @@ std::string GetFileName(const std::string& fileName, const std::string& extensio
 bool  RenameFileName(const std::string &oldFileName, const std::string &newFileName)
 {
     int res = rename(oldFileName.c_str(), newFileName.c_str());
+
+    std::cout <<"Old FileName: " << oldFileName.c_str() << std::endl;
+    std::cout <<"new FileName: " << newFileName.c_str() << std::endl;
     if (res != 0) {
         return false;
     }
@@ -78,4 +84,19 @@ bool DeleteFile(const std::string &fileName, const uint64_t &index) {
         return false;
     }
     return true;
+}
+
+
+std::string IntToString(uint64_t value) {
+    std::stringstream ss;
+    ss << value;
+    return ss.str();
+}
+
+
+uint64_t StringToInt(std::string &str) {
+    std::stringstream ss(str);
+    uint64_t i;
+    ss >> i;
+    return i;
 }

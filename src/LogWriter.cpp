@@ -59,7 +59,7 @@ bool LogWriter::AppendRecord(LogRecord& record) {
 
     // Acquire lock to create file and increase end Index.
     std::lock_guard<std::mutex> lock(_mutex);
-
+    
     if (!RenameFileName(fileName, GetFileName(sLogStoreName, LOG_EXTENSION, endRecordIndex))) {
         return false;
     }
@@ -101,10 +101,10 @@ bool LogWriter::ReadRecord(const uint64_t& recordIndex, LogRecord& record) {
 
 /*
     TruncateRecord: Delete Log from Log Store
-    Input: position: Index of the record
+    Input: index: Index of the record
     Output: bool
 */
-bool LogWriter::TruncateRecord(const uint64_t& position) {
+bool LogWriter::TruncateRecord(const uint64_t& index) {
 
     uint64_t tempIndex = 0;
     {
@@ -112,16 +112,16 @@ bool LogWriter::TruncateRecord(const uint64_t& position) {
         std::lock_guard<std::mutex> lock(_mutex);
         tempIndex = startRecordIndex;
 
-        if (position < startRecordIndex || position >= endRecordIndex) {
+        if (index < startRecordIndex || index >= endRecordIndex) {
             return false;
         }
-        startRecordIndex = position + 1;
+        startRecordIndex = index + 1;
     }
 
     uint64_t recordIndex = tempIndex;
 
     // Truncate the files from current index to last index.
-    while (recordIndex <= position) {
+    while (recordIndex <= index) {
         if (!DeleteFile(sLogStoreName, recordIndex)) {
             return false;
         }
