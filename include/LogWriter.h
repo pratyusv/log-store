@@ -44,13 +44,9 @@ public:
 template<typename T>
 std::vector<char> LogWriter<T>::ProcessRecord(T& record)
 {
-    std::string currentTime = GetCurrentTimeStamp();
-    std::vector<char> data = std::vector<char>(currentTime.begin(), currentTime.end());
 
     std::string strMsg = record.FormatToString();
-    std::vector<char> recordMsg = std::vector<char>(strMsg.begin(), strMsg.end());
-
-    data.insert(data.end(),recordMsg.begin(), recordMsg.end());
+    std::vector<char> data = std::vector<char>(strMsg.begin(), strMsg.end());
     return data;
 }
 
@@ -168,15 +164,11 @@ bool LogWriter<T>::TruncateRecord(const uint64_t& index) {
 
     uint64_t recordIndex = tempIndex;
 
-    std::cout <<"index: " << index << std::endl;
-    std::cout <<"New Start RecordIndex : " << startRecordIndex << std::endl;
-
     // Truncate the files from current index to last index.
     while (recordIndex <= index) {
         if (!DeleteFile(sLogStoreName, recordIndex)) {
             return false;
         }
-        std::cout <<"Deleting file with Index: " << recordIndex << std::endl;
         recordIndex++;
     }
 

@@ -11,6 +11,5 @@ uint64_t GetFileSize(const std::string &fileName, const uint64_t &index);
 bool DeleteFile(const std::string &fileName, const uint64_t &index);
 std::string IntToString(uint64_t value);
 uint64_t StringToInt(std::string& str);
-std::string GetCurrentTimeStamp();
-
+std::string randomString(uint64_t length);
 #endif

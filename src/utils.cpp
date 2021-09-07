@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <pwd.h>
 #include <unistd.h>
+#include <algorithm>
 #include "utils.h"
 #include "Constants.h"
 
@@ -83,22 +84,15 @@ uint64_t StringToInt(std::string &str) {
 }
 
 
-// format it in two parts: main part with date and time and part with milliseconds
-std::string GetCurrentTimeStamp()
-{
-    auto tp = std::chrono::system_clock::now();
-    std::time_t current_time = std::chrono::system_clock::to_time_t(tp);
-
-    // this function use static global pointer. so it is not thread safe solution
-    std::tm* time_info = std::localtime(&current_time);
-
-    char buffer[128];
-
-    int string_size = strftime(
-        buffer, sizeof(buffer),
-        LOGGER_PRETTY_TIME_FORMAT,
-        time_info
-    );
-
-    return std::string(buffer, buffer + string_size);
+std::string randomString(uint64_t length) {
+    auto randchar = []() -> char {
+        const char charset[] =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+        const size_t max_index = (sizeof(charset) - 1);
+        return charset[rand() % max_index];
+    };
+    std::string str(length,0);
+    std::generate_n(str.begin(), length, randchar);
+    return str;
 }

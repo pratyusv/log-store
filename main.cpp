@@ -31,7 +31,7 @@ int main() {
 
     // truncate log store
     uint64_t pos = log.GetIndex();
-    log.Truncate(3);
+    log.Truncate(pos-1);
 
     return 0;
 }
