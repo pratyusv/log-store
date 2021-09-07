@@ -2,8 +2,8 @@
 BUILD := executable
 INCDIR = ./include
 SRCDIR = src
-OBJS_TEST = utils.o  LogRecord.o LogIterator.o LogWriter.o  LogStore.o
-OBJS = utils.o LogRecord.o LogWriter.o LogIterator.o LogStore.o main.o
+OBJS_TEST = utils.o
+OBJS = utils.o  main.o
 CXX = g++
 DEBUG = -g
 LFLAGS = -Wall $(DEBUG) -lpthread
@@ -20,18 +20,6 @@ executable: $(OBJS)
 
 utils.o:
 	$(CXX) $(CXXFLAGS) -I$(INCDIR) $(SRCDIR)/utils.cpp
-
-LogRecord.o:
-	$(CXX) $(CXXFLAGS) -I$(INCDIR) $(SRCDIR)/LogRecord.cpp
-
-LogWriter.o:
-	$(CXX) $(CXXFLAGS) -I$(INCDIR) $(SRCDIR)/LogWriter.cpp
-
-LogIterator.o:
-	$(CXX) $(CXXFLAGS) -I$(INCDIR) $(SRCDIR)/LogIterator.cpp
-
-LogStore.o:
-	$(CXX) $(CXXFLAGS) -I$(INCDIR) $(SRCDIR)/LogStore.cpp
 
 main.o:
 	$(CXX) $(CXXFLAGS) -I$(INCDIR) main.cpp

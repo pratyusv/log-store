@@ -1,23 +1,37 @@
+
+#include <iostream>
+#include <sstream>
+#include "LogWriter.h"
 #include "LogStore.h"
 #include "LogIterator.h"
-#include "LogFormatter.h"
-#include <iostream>
+#include "./CustomBlob/StringBlob.h"
+#include "./CustomBlob/ErrorBlob.h"
 
 int main() {
-    LogStore log("system_log");
-    log.Append(StringRecord("hello_how_are_you"));
-    log.Append(StringRecord("_great"));
-    log.Append(StringRecord("_amazing"));
-    log.Append(StringRecord("_yes"));
+    // LogStore<StringBlob> log("system_log");
+    // log.Append(StringBlob("hello_how_are_you"));
+    // log.Append(StringBlob("_great"));
 
-    for (LogIterator itr = log.Begin()+1; itr != log.End(); itr++) {
-        std::cout << LogFormatter::toString(*itr) << std::endl;
+
+    LogStore<ErrorBlob> log("system_log");
+    log.Append(ErrorBlob(11, "Null pointer Exception", 34, "cpp"));
+    log.Append(ErrorBlob(11, "Divide by Zero", 34, "java"));
+    log.Append(ErrorBlob(11, "Null pointer Exception", 34, "cpp"));
+    log.Append(ErrorBlob(11, "Divide by Zero", 34, "java"));
+    log.Append(ErrorBlob(11, "Null pointer Exception", 34, "cpp"));
+    log.Append(ErrorBlob(11, "Divide by Zero", 34, "java"));
+    log.Append(ErrorBlob(11, "Null pointer Exception", 34, "cpp"));
+    log.Append(ErrorBlob(11, "Divide by Zero", 34, "java"));
+
+    
+
+    for (LogIterator<ErrorBlob> itr = log.Begin(); itr != log.End(); itr++) {
+        std::cout << (*itr) << std::endl;
     }
 
-    // empty log store
+    // truncate log store
     uint64_t pos = log.GetIndex();
-    std::cout <<"position: " << pos << std::endl;
-    //log.Truncate(pos-1);
+    log.Truncate(3);
 
     return 0;
 }

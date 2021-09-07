@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <string>
+#include "Constants.h"
 
 uint64_t GetFreeSpace();
 std::string GetFileName(const std::string& fileName, const std::string& extension, uint64_t index = 0);
