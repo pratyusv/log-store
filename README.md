@@ -84,8 +84,6 @@ $ ./main
 2. `make test` : builds the test for single threading
 3. `make mt_test`: builds the test for multi threading
 
-
-
 ---
 
 ## Running Tests

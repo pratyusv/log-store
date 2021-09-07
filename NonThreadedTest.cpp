@@ -9,7 +9,7 @@
 #include "LogStore.h"
 #include "LogIterator.h"
 #include "./include/utils.h"
-#include "./CustomBlob/StringBlob.h"
+#include "./customBlob/StringBlob.h"
 
 
 

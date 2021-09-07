@@ -4,8 +4,8 @@
 #include "LogWriter.h"
 #include "LogStore.h"
 #include "LogIterator.h"
-#include "./CustomBlob/StringBlob.h"
-#include "./CustomBlob/ErrorBlob.h"
+#include "./customBlob/StringBlob.h"
+#include "./customBlob/ErrorBlob.h"
 
 int main() {
     // LogStore<StringBlob> log("system_log");
