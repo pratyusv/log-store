@@ -5,7 +5,7 @@ SRCDIR = src
 OBJS = utils.o  main.o 
 OBJS_TEST = utils.o  NonThreadedTest.o
 OBJS_MTTEST = utils.o MultiThreadTest.o
-CXX = g++
+CXX = clang++
 DEBUG = -g
 LFLAGS = -Wall $(DEBUG) -lpthread
 cxxflags.test := -Wall -O1 -c $(DEBUG) -pthread -std=c++14 #-fsanitize=thread
